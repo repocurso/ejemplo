@@ -1,0 +1,3 @@
+[submodule "hit_counter"]
+    path = hit_counter
+    url = https://github.com/repocurso/hit_counter.git
