@@ -1,0 +1,108 @@
+=====================================================
+ Swarm - Gestión de Services
+=====================================================
+
+-----------------------------------------------------
+ Creación de Services
+-----------------------------------------------------
+
+$ docker service create --replicas 1 --name webserver nginx
+
+$ docker service create --mode global --name helloworld drhelius/helloworld-node-microservice
+
+-----------------------------------------------------
+ Consulta de Services
+-----------------------------------------------------
+
+$ docker service ls
+
+$ docker service ps webserver
+
+$ docker service inspect --pretty webserver
+
+-----------------------------------------------------
+ Escalado manual de tareas
+-----------------------------------------------------
+
+$ docker service scale webserver=2
+
+-----------------------------------------------------
+ Consulta de logs
+-----------------------------------------------------
+
+$ docker service logs webserver   
+
+-----------------------------------------------------
+ Actualizaciones - Rolling Update
+-----------------------------------------------------
+
+$ docker service create --replicas 2 --name redis --update-delay 10s --update-parallelism 2 redis:3.0.6
+
+$ docker service update --image redis:3.0.7 redis
+
+$ docker service rollback redis 
+
+-----------------------------------------------------
+ Eliminación de Services
+-----------------------------------------------------
+
+$ docker service rm webserver                     
+
+-----------------------------------------------------
+ Integración con Dockerfile
+-----------------------------------------------------
+
+$ mkdir -p ~/curso/proyecto1 && cd ~/curso/proyecto1
+
+$ cat << EOT > Dockerfile
+FROM nginx:latest
+EXPOSE 80
+COPY index.html /usr/share/nginx/html/index.html
+EOT
+
+$ cat << EOT > index.html
+Curso docker
+EOT
+
+$ docker build -t nginx:curso .
+
+$ docker images nginx:curso
+
+$ docker image save -o nginx-curso.tar nginx:curso
+$ scp nginx-curso.tar 10.100.199.201; ssh 10.100.199.201 "docker load -i nginx-curso.tar"
+$ scp nginx-curso.tar 10.100.199.202; ssh 10.100.199.202 "docker load -i nginx-curso.tar"
+
+$ docker service create --replicas 1 --name integra1 nginx:curso
+
+$ docker service ps integra1 --no-trunc
+
+--- Verifica la ubicación del container -------------
+--- Inicia una sesion en el nodo --------------------
+
+$ docker ps
+$ docker exec -it integra1.1.rd2obze6b3syn4des2fdu6opg curl localhost
+
+-----------------------------------------------------
+ Integración con Docker Compose
+-----------------------------------------------------
+
+$ cat << EOT > docker-compose.yml
+version: '3'
+services:
+  nginx:
+    image: nginx:curso
+    deploy:
+      replicas: 2
+    ports:
+      - "8081:80"
+EOT
+
+$ docker stack deploy -c docker-compose.yml integra2
+
+$ docker service ls
+$ docker service ps integra2_nginx
+
+$ curl localhost:8081
+
+$ docker service rm integra1 
+$ docker compose integra2_nginx down

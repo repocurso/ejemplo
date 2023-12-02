@@ -1,0 +1,63 @@
+=====================================================
+ Swarm - Gestión de nodos 
+=====================================================
+
+-----------------------------------------------------
+ Convertir un nodo worker en manager
+-----------------------------------------------------
+
+$ docker node ls
+
+$ docker node promote worker01 
+
+$ docker node demote worker01 
+
+-----------------------------------------------------
+ Mantenimiento sobre los nodos (estados)
+-----------------------------------------------------
+
+$ docker node update --availability drain manager
+$ docker node update --availability pause worker01
+$ docker node update --availability active worker02
+
+$ docker node ls
+
+$ docker node inspect --pretty manager | grep -i availability
+$ docker node inspect --pretty worker01| grep -i availability
+$ docker node inspect --pretty worker02 | grep -i availability
+
+$ docker service create --replicas 3 --name helloworld -p 8080:8080 drhelius/helloworld-node-microservice 
+
+$ docker service ps helloworld
+
+$ docker node update --availability active worker01
+
+-----------------------------------------------------
+ Agregar y Eliminar nodos 
+-----------------------------------------------------
+
+--- Conexión a un nodo (worker02) desde local -------
+
+$ ssh vagrant@10.100.199.202
+
+--- Sesión en nodo worker02 -------------------------
+
+$ docker swarm leave
+
+--- Sesión en nodo manager --------------------------
+
+$ docker node ls
+$ docker node rm worker02
+$ docker node ls
+
+$ docker swarm join-token manager
+$ docker swarm join-token worker 
+
+--- Sesión en nodo worker02 -------------------------
+
+$ docker swarm join --token SWMTKN-1-533oxlaty92sz2rq8jdk1l5jrmav78o7mtbi544e6nxhqqerlh-8ic3tu6u0kgr2cg41g0qiu3a6 10.100.199.200:2377
+
+--- Sesión en nodo manager --------------------------
+
+$ docker node ls
+

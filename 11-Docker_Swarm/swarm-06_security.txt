@@ -1,0 +1,86 @@
+=====================================================
+ Swarm - Seguridad 
+=====================================================
+
+-----------------------------------------------------
+ Certificado CA
+-----------------------------------------------------
+
+$ sudo ls -l /var/lib/docker/swarm/certificates
+
+$ sudo cat /var/lib/docker/swarm/certificates/swarm-root-ca.crt
+$ docker swarm ca
+
+$ docker swarm ca --rotate
+
+-----------------------------------------------------
+ Cleves privadas y certificado del nodo
+-----------------------------------------------------
+
+$ sudo cat /var/lib/docker/swarm/certificates/swarm-node.key
+
+$ docker swarm update --cert-expiry 1440h0m0s
+
+$ sudo cat /var/lib/docker/swarm/certificates/swarm-node.crt
+
+-----------------------------------------------------
+ Bloqueo del clúster (lock)
+-----------------------------------------------------
+
+$ docker swarm update --autolock=true
+
+$ docker swarm unlock-key
+$ docker swarm unlock-key --rotate
+
+--- Reinicio del nodo manager -----------------------
+
+$ docker node ls
+
+$ docker swarm unlock
+
+$ docker node ls
+
+$ docker swarm update --autolock=false
+$ docker info | grep -iE '(is manager|autolock)'
+
+-----------------------------------------------------
+ Secrets
+-----------------------------------------------------
+
+$ echo "Curso Docker - Secrets" > data.txt
+$ docker secret create secret1 data.txt
+$ printf "password1" | docker secret create secret2 -
+
+$ docker secret ls
+
+$ docker service  create --name nginx-01 --secret secret1 nginx
+
+$ docker service inspect nginx-01
+$ docker service ps nginx-01 --no-trunc
+
+--- Verifica la ubicación del container -------------
+--- Inicia una sesion en el nodo --------------------
+
+$ docker ps
+$ docker exec -it nginx-01.1.zbt2b1ghhzxmdhs5k2c6t21rm cat /run/secrets/secret1
+
+--- Sesión en nodo manager --------------------------
+
+$ docker service update --secret-add secret2 nginx-01
+$ docker service inspect nginx-01 --no-trunc
+
+--- Sesión en nodo container ------------------------
+
+$ docker ps
+$ docker exec -it nginx-01.1.r2ljsr86oxsxbuhg2s8teo2q9 cat /run/secrets/secret2
+
+--- Sesión en nodo manager --------------------------
+
+$ docker service update --secret-rm secret1 nginx-01
+$ docker service inspect nginx-01
+
+$ docker secret rm secret1
+$ docker secret rm secret2
+$ docker service rm nginx-01
+$ docker secret ls
+

@@ -1,0 +1,33 @@
+=====================================================
+ Docker Swarm
+=====================================================
+
+--- Preparación desde el nodo manager ---------------
+
+$ sudo su
+
+# cat << EOT >> /etc/hosts
+10.100.199.200 manager  manager
+10.100.199.201 worker01 worker01
+10.100.199.202 worker02 worker02
+EOT
+
+# exit
+
+$ ssh-keygen
+$ ssh-copy-id -f worker01
+$ ssh-copy-id -f worker02
+
+=====================================================
+ Swarm - Creación del clúster
+=====================================================
+
+$ docker swarm init --advertise-addr 172.17.0.3
+
+$ docker swarm join-token manager
+$ docker swarm join-token worker
+
+$ docker swarm join --token SWMTKN-1-596wtfszevxxelpvt72mxa256swibceofrwwe4dv0dpz214nas-7wiutg8ui023x52wg79bgh3c2 172.17.0.3:2377
+
+$ docker node ls
+

@@ -1,0 +1,19 @@
+=====================================================
+ Swarm - Redes
+=====================================================
+
+$ docker network ls
+
+$ docker network inspect ingress
+
+$ docker network inspect --format="{{json .Containers}}" ingress
+$ docker network inspect --format="{{json .Containers}}" docker_gwbridge
+
+$ sudo ip netns list
+$ sudo ip netns exec ingress_sbox ip addr
+
+$ docker service ls
+$ docker service inspect --format="{{json .Endpoint.Spec.Ports}}" helloworld
+
+$ curl 10.100.199.200:8080
+

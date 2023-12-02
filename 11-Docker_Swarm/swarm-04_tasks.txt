@@ -1,0 +1,44 @@
+=====================================================
+ Swarm - Gestión de tareas
+=====================================================
+
+-----------------------------------------------------
+ Restricciones por uso de Recursos
+-----------------------------------------------------
+
+$ docker service create --name nginx-01 --replicas 4 --replicas-max-per-node 2 nginx
+
+$ docker service create --name nginx-02 --reserve-memory 900Mb --reserve-cpu 2 --replicas 2 nginx
+
+$ docker service rm nginx-01 nginx-02
+
+-----------------------------------------------------
+ Restricciones por colocación
+-----------------------------------------------------
+
+$ docker node update --label-add region=eu-west1 worker01
+$ docker node inspect worker01
+
+$ docker node update --label-add region=eu-east1 worker02
+$ docker node inspect worker02
+
+$ docker service create --name nginx-01 --constraint node.labels.region==eu-west1 nginx
+$ docker service ps nginx-01
+
+$ docker service create --name nginx-02 --constraint node.labels.region!=eu-west1 nginx
+$ docker service ps nginx-02
+
+$ docker node update --label-rm region worker02
+$ docker node inspect worker02
+
+$ docker node ls --filter "role=manager"
+$ docker node ls --filter "role=worker"
+
+$ docker node inspect --format '{{json .Spec}}' manager
+$ docker node inspect --format '{{json .Spec}}' worker01 worker02
+
+$ docker service create --replicas 3 --name helloworld --constraint node.role==worker -p 8080:8080 drhelius/helloworld-node-microservice 
+$ docker service ps helloworld
+
+$ docker service rm nginx-01 nginx-02
+
