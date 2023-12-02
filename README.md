@@ -27,7 +27,7 @@ The background color is `#ffffff` for light mode and `#000000` for dark mode.
 1. James Monroe
 1. John Quincy Adams
 
-1. First list item
-   - First nested list item
-     - Second nested list ite
+- First list item
+  - First nested list item
+    - Second nested list ite
 
