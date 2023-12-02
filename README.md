@@ -1,6 +1,6 @@
 # docker
 
-Proporciona una suite de herramientas de desarrollo, servicios, contenido confiable y automatizaciones, utilizados individualmente o en conjunto, para acelerar la entrega de aplicaciones seguras.
+**docker** proporciona una suite de herramientas de desarrollo, servicios, contenido confiable y automatizaciones, utilizados individualmente o en conjunto, para acelerar la entrega de aplicaciones seguras.
 
 <img src="images/docker-logo.png" alt="Brasa" width="200">
 
