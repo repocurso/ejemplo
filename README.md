@@ -3,8 +3,7 @@
 **docker** proporciona una suite de herramientas de desarrollo, servicios, contenido confiable y automatizaciones, utilizados individualmente o en conjunto, para acelerar la entrega de aplicaciones seguras.
 
 <img src="images/docker-logo.png" alt="Brasa" width="200">
-
-![docker-logo](https://github.com/repocurso/ejemplo/assets/152635234/839ae1f7-ced9-48d2-a85d-a6db72631511)
+<img src="https://github.com/repocurso/ejemplo/assets/152635234/839ae1f7-ced9-48d2-a85d-a6db72631511" alt="docker-log" width="200">
 
 ## ejemplos
 ### cursos
