@@ -7,6 +7,20 @@
 ## docker - Agenda
 ### Capítulos
 
+1. Introducción
+1. Instalación de docker
+1. Gestión de containers
+1. Gestión de imágenes
+1. Registry (Repositorios)
+1. Networking
+1. Storage – Volumes
+1. Dockerfile
+1. Docker Compose
+1. Docker Swarm
+1. Seguridad
+1. Monitorización
+1. Docker Enterprise Platform
+
 **This is bold text**
 
 _This text is italicized_
@@ -27,27 +41,6 @@ The background color is `#ffffff` for light mode and `#000000` for dark mode.
 - George Washington
 * John Adams
 + Thomas Jefferson
-
-1. James Madison
-1. James Monroe
-1. John Quincy Adams
-
-1. Introducción
-1. Instalación de docker
-1. Gestión de containers
-1. Gestión de imágenes
-1. Registry (Repositorios)
-1. Networking
-1. Storage – Volumes
-1. Dockerfile
-1. Docker Compose
-1. Docker Swarm
-1. Seguridad
-1. Monitorización 
-1. Docker Enterprise Platform
-
-
-
 
 - First list item
   - First nested list item
