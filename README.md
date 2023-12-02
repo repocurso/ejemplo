@@ -53,5 +53,5 @@ The background color is `#ffffff` for light mode and `#000000` for dark mode.
 > [!CAUTION]
 > Negative potential consequences of an action.
 
-![Brasa](images/docker-logo.png)
-<img src="images/docker-logo.png" alt="Brasa" width="200">
+![docker-logo](https://github.com/repocurso/ejemplo/assets/152635234/839ae1f7-ced9-48d2-a85d-a6db72631511)
+
