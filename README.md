@@ -49,4 +49,4 @@ The background color is `#ffffff` for light mode and `#000000` for dark mode.
 > Negative potential consequences of an action.
 
 ![Brasa](images/docker-logo.png)
-<img src="images/docker-logo.png" alt="Brasa" width="200" height="200">
+<img src="images/docker-logo.png" alt="Brasa" width="200">
