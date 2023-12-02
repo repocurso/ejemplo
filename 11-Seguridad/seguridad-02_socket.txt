@@ -1,0 +1,141 @@
+=====================================================
+ Seguridad - Proteger el socket del Docker daemon
+=====================================================
+
+$ ls -l /var/run/docker.sock
+
+-----------------------------------------------------
+ SSH para proteger el socket del daemon (Context)
+-----------------------------------------------------
+
+$ ssh-keygen
+$ ssh-copy-id -f worker01 
+$ ssh-copy-id -f worker01 
+
+$ docker context ls
+$ docker context show
+
+$ docker context create worker01-context --docker "host=ssh://vagrant@worker01" --description="Remote Engine worker01"
+$ docker context create worker01-context --docker "host=ssh://vagrant@worker02" --description="Remote Engine worker02"
+$ docker context use worker02-context
+$ docker info
+
+$ docker context show
+$ docker context rm -f worker02-context
+
+-----------------------------------------------------
+ Exportar e Importar contextos (SSH)
+-----------------------------------------------------
+
+$ docker context ls
+$ docker context export worker01-context
+$ ls -l worker01-context.dockercontext
+
+$ docker context show
+$ docker context rm -f worker01-context
+
+$ docker context ls
+$ docker context import worker01-restore worker01-context.dockercontext
+$ docker context ls
+
+$ tree  ~/.docker/contexts
+
+$ cd ~/.docker/contexts/meta
+$ cd d9eb86b780bda0f656e0154bca2b07316e3659c5a0c2ddce2fb38df59d22cb76
+$ cat meta.json
+
+-----------------------------------------------------
+ Uso de SSH sin contextos
+-----------------------------------------------------
+
+$ docker -H ssh://vagrant@worker01 info | grep -i name
+
+$ export DOCKER_HOST="ssh://vagrant@worker01"
+$ docker info | grep -i name
+
+-----------------------------------------------------
+ TLS (HTTPS) para proteger el socket del daemon
+-----------------------------------------------------
+
+--- Creación de CA con OpenSSL ----------------------
+
+$ ssh vagrant@worker2
+
+$ mkdir ~/cert && cd ~/cert
+$ export HOST=worker02
+
+$ openssl genrsa -aes256 -out ca-key.pem 4096
+
+$ openssl req -new -x509 -days 365 -key ca-key.pem -sha256 -out ca.pem
+
+--- Claves server/client con OpenSSL ----------------
+--- server ------------------------------------------
+
+$ openssl genrsa -out server-key.pem 4096
+
+$ openssl req -subj "/CN=$HOST" -sha256 -new -key server-key.pem -out server.csr
+
+$ echo subjectAltName = DNS:$HOST,IP:10.100.199.202,IP:127.0.0.1 >> extfile.cnf
+$ echo extendedKeyUsage = serverAuth >> extfile.cnf
+$ cat extfile.cnf
+
+$ openssl x509 -req -days 365 -sha256 -in server.csr -CA ca.pem -CAkey ca-key.pem -CAcreateserial -out server-cert.pem -extfile extfile.cnf
+
+--- client ------------------------------------------
+
+$ openssl genrsa -out key.pem 4096
+
+$ openssl req -subj '/CN=client' -new -key key.pem -out client.csr
+
+$ echo extendedKeyUsage = clientAuth > extfile-client.cnf
+
+$ openssl x509 -req -days 365 -sha256 -in client.csr -CA ca.pem -CAkey ca-key.pem -CAcreateserial -out cert.pem -extfile extfile-client.cnf
+
+$ rm -v client.csr server.csr extfile.cnf extfile-client.cnf
+$ chmod -v 0400 ca-key.pem key.pem server-key.pem
+$ chmod -v 0444 ca.pem server-cert.pem cert.pem
+
+-----------------------------------------------------
+ Uso de TLS – Arranque del daemon
+-----------------------------------------------------
+
+--- nodo: worker02 ----------------------------------
+
+$ export HOST=worker02
+
+$ ls -l /etc/docker/daemon.json
+$ mv /etc/docker/daemon.json /etc/docker/daemon.json.org
+
+$ pkill docker
+$ pkill dockerd
+
+$ sudo nohup dockerd --tlsverify --tlscacert=ca.pem  --tlscert=server-cert.pem --tlskey=server-key.pem -H=0.0.0.0:2376 &
+
+-----------------------------------------------------
+ Uso de TLS – Arranque del client
+-----------------------------------------------------
+
+--- nodo: worker02 ----------------------------------
+
+$ export HOST=worker02
+
+$ docker version
+$ docker --tlsverify --tlscacert=ca.pem --tlscert=cert.pem  --tlskey=key.pem -H=$HOST:2376 version
+
+-----------------------------------------------------
+ Establecer la seguridad por defecto
+-----------------------------------------------------
+
+$ mkdir -pv ~/.docker
+
+$ cp -v {ca,cert,key}.pem ~/.docker
+
+export DOCKER_HOST=tcp://$HOST:2376 DOCKER_TLS_VERIFY=1
+
+$ docker version
+
+$ curl https://$HOST:2376/images/json --cert ~/.docker/cert.pem --key ~/.docker/key.pem --cacert ~/.docker/ca.pem
+
+
+
+

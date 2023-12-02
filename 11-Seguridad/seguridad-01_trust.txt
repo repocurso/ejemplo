@@ -1,0 +1,112 @@
+=====================================================
+ Seguridad - Docker Content Trust 
+=====================================================
+
+$ docker login
+
+$ docker search repocurso
+
+$ docker search repocurso/hello-world
+
+-----------------------------------------------------
+ Activación de DCT en Docker CLI
+-----------------------------------------------------
+
+$ echo $DOCKER_CONTENT_TRUST
+$ export DOCKER_CONTENT_TRUST=1 
+
+-----------------------------------------------------
+ Verificación de la firma en una imagen local
+-----------------------------------------------------
+
+$ docker tag docker:v1 repocurso/docker:v1
+$ docker images repocurso/docker:v1
+
+$ docker trust inspect --pretty repocurso/docker:v1
+
+-----------------------------------------------------
+ Operación con una imagen no firmada
+-----------------------------------------------------
+
+$ export DOCKER_CONTENT_TRUST=0
+$ docker push repocurso/docker:v1
+
+$ export DOCKER_CONTENT_TRUST=1
+$ docker pull repocurso/docker:v1
+
+$ sudo yum install -y jq
+$ curl -s https://hub.docker.com/v2/repositories/repocurso/docker | jq
+$ curl -s https://hub.docker.com/v2/repositories/repocurso/docker/tags | jq
+
+---
+
+$ export DOCKER_CONTENT_TRUST=0
+
+$ docker run --name container1 repocurso/hello-world:latest
+
+$ docker run --name container2 --disable-content-trust=false repocurso/hello-world:latest
+
+-----------------------------------------------------
+ Generación de claves (privada y pública)
+-----------------------------------------------------
+
+$ docker trust key generate curso-key
+
+$ ls ~/.docker/trust/private/*.key
+$ cd ~/.docker/trust/private/
+$ cat 22a1398ab127e66dd1db3fea713c6e953de16816a8c59744d668d282e7a12617.key
+
+$ ls curso-key.pub
+$ cat curso-key.pub
+
+-----------------------------------------------------
+ Agregar la clave pública al repositorio 
+-----------------------------------------------------
+
+$ docker trust signer add --key ~/curso-key.pub curso-key repocurso/hello-world:latest
+
+$ docker trust inspect --pretty curso/repositorio:latest
+
+$ cd ~/.docker/trust/private/
+$ cat 5689805483f372b7b1c7f6a4d496263c67c7b98934b77bda4ba0a0dafa790420.key
+$ cat a4490c94088f1ff3caaccf0549e01d1bfd6b52bf6ff6167ee20b0619666ee354.key
+
+-----------------------------------------------------
+ Operación con una imagen no firmada
+-----------------------------------------------------
+
+$ export DOCKER_CONTENT_TRUST=1
+
+$ docker run --name container2 repocurso/hello-world:latest
+
+$ docker trust inspect --pretty repocurso/hello-world:latest
+
+-----------------------------------------------------
+ Registrar una imagen firmada
+-----------------------------------------------------
+
+$ docker trust sign repocurso/hello-world:latest
+
+$ docker trust inspect --pretty repocurso/hello-world:latest
+
+$ docker run --name container2 repocurso/hello-world:latest
+
+-----------------------------------------------------
+ Eliminar la firma de una imagen firmada
+-----------------------------------------------------
+
+$ docker trust revoke repocurso/hello-world:latest
+
+$ docker trust inspect --pretty repocurso/hello-world:latest
+
+$ docker run --name container3 repocurso/hello-world:latest
+
+-----------------------------------------------------
+ Eliminar signer
+-----------------------------------------------------
+
+$ docker trust signer remove curso-key repocurso/hello-world:latest
+
+$ docker trust inspect --pretty repocurso/hello-world:latest
+
+
