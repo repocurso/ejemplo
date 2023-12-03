@@ -1,0 +1,51 @@
+version: '3'
+services:
+  nginx-lb:
+    image: nginx:latest
+    container_name: nginx-LB
+    ports:
+      - "8080:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+    depends_on:
+      - nginx1
+      - nginx2
+    networks:
+      - balancer-net
+
+  nginx1:
+    image: nginx:latest
+    container_name: nginx-1
+    hostname: nginx1
+    environment:
+      - NAME=Docker(nginx1)
+    volumes:
+      - ./index1.html:/usr/share/nginx/html/index.html
+      - ./start.sh:/usr/local/bin/start.sh
+    command: /usr/local/bin/start.sh
+    networks:
+      balancer-net:
+        ipv4_address: 172.20.0.11
+  nginx2:
+    image: nginx:latest
+    container_name: nginx-2
+    hostname: nginx2
+    environment:
+      - NAME=Docker(nginx2)
+    volumes:
+      - ./index2.html:/usr/share/nginx/html/index.html
+      - ./start.sh:/usr/local/bin/start.sh
+    command: /usr/local/bin/start.sh
+    networks:
+      balancer-net:
+        ipv4_address: 172.20.0.12
+networks:
+  balancer-net:
+    driver: bridge
+    external: false
+    name: balancer-net
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.20.0.0/24
+
