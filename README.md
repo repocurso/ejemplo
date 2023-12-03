@@ -43,11 +43,10 @@ _This text is italicized_
 
 This is a <sub>subscript</sub> text
 
-Some basic Git commands are:
+Para decargar el repositorio:
 ```
-git status
-git add
-git commit
+mkdir -p ~/repocurso/docker && ~/repocurso/docker
+git clone https://github.com/repocurso/ejemplo.git
 ```
 
 The background color is `#ffffff` for light mode and `#000000` for dark mode.
