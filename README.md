@@ -45,7 +45,7 @@ This is a <sub>subscript</sub> text
 
 Para decargar el repositorio:
 ```
-mkdir -p ~/repocurso/docker && ~/repocurso/docker
+mkdir -p ~/repocurso/docker && cd ~/repocurso/docker
 git clone https://github.com/repocurso/ejemplo.git
 ```
 
