@@ -29,8 +29,8 @@ _This text is italicized_
 **This text is _extremely_ important**
 
 This is a <sub>subscript</sub> text
-
-Para decargar el repositorio:
+> [!NOTE]
+> Para descargar el repositorio, utiliza los siguientes comandos:
 ```
 mkdir -p ~/repocurso/docker && cd ~/repocurso/docker
 git clone https://github.com/repocurso/ejemplo.git
