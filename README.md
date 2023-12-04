@@ -29,7 +29,7 @@ _This text is italicized_
 **This text is _extremely_ important**
 
 This is a <sub>subscript</sub> text
-> [!NOTE]
+> [!NOTE]Nota
 > Para descargar el repositorio, utiliza los siguientes comandos:
 ```
 mkdir -p ~/repocurso/docker && cd ~/repocurso/docker
